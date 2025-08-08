@@ -1584,9 +1584,7 @@ Are there any sub-limits on room rent and ICU charges for Plan A?""",
         <p style="font-size: 0.9em; color: #666;">
             Built for Maximum Accuracy Insurance, Legal, HR & Compliance Document Analysis
         </p>
-        <p style="font-size: 0.8em; color: #888;">
-            
-        </p>
+       
     </div>
     """, unsafe_allow_html=True)
 
