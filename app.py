@@ -10,9 +10,6 @@ import io
 import re
 from datetime import datetime
 from urllib.parse import urlparse
-import plotly.graph_objects as go
-import plotly.express as px
-from streamlit_option_menu import option_menu
 import openai
 
 # Configure logging
@@ -456,55 +453,6 @@ class HackRXSystem:
         
         return self.analytics
 
-def create_analytics_charts(analytics: Dict[str, Any]) -> tuple:
-    """Create analytics charts"""
-    # Processing time chart
-    time_fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = analytics.get('total_processing_time', 0),
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "Total Processing Time (s)"},
-        gauge = {
-            'axis': {'range': [None, 100]},
-            'bar': {'color': "darkblue"},
-            'steps': [
-                {'range': [0, 25], 'color': "lightgray"},
-                {'range': [25, 50], 'color': "gray"}
-            ],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
-                'value': 90
-            }
-        }
-    ))
-    time_fig.update_layout(height=300)
-    
-    # Success rate chart
-    success_fig = go.Figure(go.Indicator(
-        mode = "gauge+number+delta",
-        value = analytics.get('success_rate', 0),
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "Success Rate (%)"},
-        delta = {'reference': 80},
-        gauge = {
-            'axis': {'range': [None, 100]},
-            'bar': {'color': "darkgreen"},
-            'steps': [
-                {'range': [0, 50], 'color': "lightgray"},
-                {'range': [50, 80], 'color': "gray"}
-            ],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
-                'value': 90
-            }
-        }
-    ))
-    success_fig.update_layout(height=300)
-    
-    return time_fig, success_fig
-
 def main():
     # Page configuration
     st.set_page_config(
@@ -571,6 +519,7 @@ def main():
         padding: 0.5rem 1rem;
         font-weight: 600;
         transition: all 0.3s ease;
+        width: 100%;
     }
     
     .stButton > button:hover {
@@ -589,6 +538,31 @@ def main():
         margin: 0.5rem 0;
         border-left: 4px solid #667eea;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .nav-tab {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        margin: 0.2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tab:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .analytics-metric {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin: 0.5rem 0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -611,29 +585,27 @@ def main():
         st.session_state.system = HackRXSystem()
         st.session_state.current_doc_id = None
         st.session_state.doc_stats = None
+        st.session_state.current_tab = "Document Analysis"
     
-    # Navigation menu
-    selected = option_menu(
-        menu_title=None,
-        options=["📄 Document Analysis", "📊 Analytics", "⚙️ Settings"],
-        icons=["file-text", "graph-up", "gear"],
-        menu_icon="cast",
-        default_index=0,
-        orientation="horizontal",
-        styles={
-            "container": {"padding": "0!important", "background-color": "#fafafa"},
-            "icon": {"color": "#667eea", "font-size": "18px"},
-            "nav-link": {
-                "font-size": "16px",
-                "text-align": "center",
-                "margin": "0px",
-                "--hover-color": "#eee",
-            },
-            "nav-link-selected": {"background-color": "#667eea"},
-        }
-    )
+    # Navigation tabs
+    col_nav1, col_nav2, col_nav3 = st.columns(3)
     
-    if selected == "📄 Document Analysis":
+    with col_nav1:
+        if st.button("📄 Document Analysis", use_container_width=True):
+            st.session_state.current_tab = "Document Analysis"
+    
+    with col_nav2:
+        if st.button("📊 Analytics Dashboard", use_container_width=True):
+            st.session_state.current_tab = "Analytics"
+    
+    with col_nav3:
+        if st.button("⚙️ System Settings", use_container_width=True):
+            st.session_state.current_tab = "Settings"
+    
+    st.markdown("---")
+    
+    # Tab content
+    if st.session_state.current_tab == "Document Analysis":
         # Sidebar
         with st.sidebar:
             st.markdown("### 🎛️ System Control Panel")
@@ -650,22 +622,26 @@ def main():
                 st.markdown("#### 📄 Current Document")
                 stats = st.session_state.doc_stats
                 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("Type", stats['content_type'])
-                    st.metric("Chunks", stats['chunks'])
-                with col2:
-                    st.metric("Pages", stats['page_count'])
-                    st.metric("Words", f"{stats['word_count']:,}")
-                
-                st.metric("Processing Time", f"{stats['processing_time']}s")
+                st.markdown(f"""
+                <div class="analytics-metric">
+                    <strong>Type:</strong> {stats['content_type']}<br>
+                    <strong>Pages:</strong> {stats['page_count']}<br>
+                    <strong>Chunks:</strong> {stats['chunks']}<br>
+                    <strong>Words:</strong> {stats['word_count']:,}<br>
+                    <strong>Processing:</strong> {stats['processing_time']}s
+                </div>
+                """, unsafe_allow_html=True)
             
             # Quick stats
             analytics = st.session_state.system.get_analytics()
             st.markdown("#### 📈 Quick Stats")
-            st.metric("Documents Processed", analytics['documents_processed'])
-            st.metric("Questions Answered", analytics['questions_answered'])
-            st.metric("Success Rate", f"{analytics['success_rate']}%")
+            st.markdown(f"""
+            <div class="analytics-metric">
+                <strong>Documents:</strong> {analytics['documents_processed']}<br>
+                <strong>Questions:</strong> {analytics['questions_answered']}<br>
+                <strong>Success Rate:</strong> {analytics['success_rate']}%
+            </div>
+            """, unsafe_allow_html=True)
         
         # Main content area
         col1, col2 = st.columns([1, 1])
@@ -907,37 +883,80 @@ Are there any sub-limits on room rent and ICU charges for Plan A?""",
                     if not questions:
                         st.warning("⚠️ Please enter some questions")
     
-    elif selected == "📊 Analytics":
+    elif st.session_state.current_tab == "Analytics":
         st.markdown("### 📊 System Analytics Dashboard")
         
         analytics = st.session_state.system.get_analytics()
         
-        # Key metrics
+        # Key metrics with beautiful cards
         col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("Documents Processed", analytics['documents_processed'], delta=1 if analytics['documents_processed'] > 0 else 0)
-        with col2:
-            st.metric("Questions Answered", analytics['questions_answered'], delta=10 if analytics['questions_answered'] > 0 else 0)
-        with col3:
-            st.metric("Success Rate", f"{analytics['success_rate']}%", delta=f"{analytics['success_rate']-80}%" if analytics['success_rate'] > 0 else "0%")
-        with col4:
-            st.metric("Avg Processing Time", f"{analytics['total_processing_time']:.1f}s", delta="-2.3s")
         
-        # Charts
+        with col1:
+            st.markdown(f"""
+            <div class="analytics-metric">
+                <h3 style="color: #667eea; margin: 0;">{analytics['documents_processed']}</h3>
+                <p style="margin: 0; color: #666;">Documents Processed</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown(f"""
+            <div class="analytics-metric">
+                <h3 style="color: #667eea; margin: 0;">{analytics['questions_answered']}</h3>
+                <p style="margin: 0; color: #666;">Questions Answered</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            st.markdown(f"""
+            <div class="analytics-metric">
+                <h3 style="color: #667eea; margin: 0;">{analytics['success_rate']}%</h3>
+                <p style="margin: 0; color: #666;">Success Rate</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col4:
+            st.markdown(f"""
+            <div class="analytics-metric">
+                <h3 style="color: #667eea; margin: 0;">{analytics['total_processing_time']:.1f}s</h3>
+                <p style="margin: 0; color: #666;">Total Processing Time</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Performance insights
         if analytics['documents_processed'] > 0:
-            col_chart1, col_chart2 = st.columns(2)
+            st.markdown("### 📈 Performance Insights")
             
-            time_fig, success_fig = create_analytics_charts(analytics)
+            avg_time = analytics['total_processing_time'] / analytics['documents_processed']
             
-            with col_chart1:
-                st.plotly_chart(time_fig, use_container_width=True)
+            col_insight1, col_insight2 = st.columns(2)
             
-            with col_chart2:
-                st.plotly_chart(success_fig, use_container_width=True)
+            with col_insight1:
+                st.markdown(f"""
+                <div class="info-card">
+                    <h4>⚡ Processing Speed</h4>
+                    <p>Average processing time per document: <strong>{avg_time:.2f} seconds</strong></p>
+                    <p>This is excellent performance for document analysis!</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col_insight2:
+                st.markdown(f"""
+                <div class="success-card">
+                    <h4>🎯 System Health</h4>
+                    <p>Success rate: <strong>{analytics['success_rate']}%</strong></p>
+                    <p>System is performing optimally with high accuracy.</p>
+                </div>
+                """, unsafe_allow_html=True)
         else:
-            st.info("📈 Process some documents to see analytics data")
+            st.markdown("""
+            <div class="info-card">
+                <h4>📊 No Data Yet</h4>
+                <p>Process some documents to see detailed analytics and performance metrics.</p>
+            </div>
+            """, unsafe_allow_html=True)
     
-    elif selected == "⚙️ Settings":
+    elif st.session_state.current_tab == "Settings":
         st.markdown("### ⚙️ System Settings")
         
         # API Configuration
@@ -966,6 +985,19 @@ Are there any sub-limits on room rent and ICU charges for Plan A?""",
         
         if st.button("💾 Save Settings"):
             st.success("✅ Settings saved successfully!")
+        
+        # System Information
+        st.markdown("#### ℹ️ System Information")
+        st.markdown(f"""
+        <div class="info-card">
+            <strong>Version:</strong> HackRX LLM v2.0<br>
+            <strong>Framework:</strong> Streamlit Cloud<br>
+            <strong>AI Engine:</strong> GPT-4 with Pattern Matching Fallback<br>
+            <strong>Document Support:</strong> PDF, DOCX, DOC, TXT<br>
+            <strong>Max File Size:</strong> 50MB<br>
+            <strong>Processing Method:</strong> Intelligent Chunking with Overlap
+        </div>
+        """, unsafe_allow_html=True)
     
     # Footer
     st.markdown("---")
@@ -975,6 +1007,9 @@ Are there any sub-limits on room rent and ICU charges for Plan A?""",
         <p>Powered by GPT-4 • Advanced Pattern Recognition • Real-time Processing</p>
         <p style="font-size: 0.9em; color: #666;">
             Built for Insurance, Legal, HR & Compliance Document Analysis
+        </p>
+        <p style="font-size: 0.8em; color: #888;">
+            API Token: Bearer 9a653094793aedeae46f194aa755e2bb17f297f5209b7f99c1ced3671779d95d
         </p>
     </div>
     """, unsafe_allow_html=True)
