@@ -966,7 +966,7 @@ def main():
     st.markdown("""
     <style>
     .main-header {
-        background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         padding: 2rem;
         border-radius: 15px;
         color: white;
@@ -976,7 +976,7 @@ def main():
     }
     
     .accuracy-badge {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         color: #000;
         padding: 0.5rem 1rem;
         border-radius: 20px;
@@ -986,43 +986,47 @@ def main():
     }
     
     .success-card {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        border: 1px solid #c3e6cb;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border: 1px solid #90caf9;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        color: #0d47a1;
     }
     
     .error-card {
-        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        border: 1px solid #f5c6cb;
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        border: 1px solid #ef9a9a;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        color: #c62828;
     }
     
     .info-card {
-        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
-        border: 1px solid #bee5eb;
+        background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+        border: 1px solid #81d4fa;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        color: #01579b;
     }
     
     .accuracy-card {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-        border: 1px solid #ffeaa7;
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+        border: 1px solid #ce93d8;
         border-radius: 12px;
         padding: 1.5rem;
         margin: 1rem 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        color: #4a148c;
     }
     
     .stButton > button {
-        background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+        background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
         color: white;
         border: none;
         border-radius: 8px;
@@ -1033,22 +1037,25 @@ def main():
     }
     
     .stButton > button:hover {
+        background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
     
     .analytics-metric {
-        background: white;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
         padding: 1rem;
         border-radius: 8px;
         text-align: center;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         margin: 0.5rem 0;
-        border-left: 4px solid #2E8B57;
+        border-left: 4px solid #1976d2;
+        color: #0d47a1;
+        font-weight: 500;
     }
     
     .accuracy-metric {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         color: #000;
         padding: 1rem;
         border-radius: 8px;
@@ -1057,7 +1064,7 @@ def main():
         margin: 0.5rem 0;
         font-weight: bold;
     }
-    </style>
+</style>
     """, unsafe_allow_html=True)
     
     # Header with accuracy emphasis
