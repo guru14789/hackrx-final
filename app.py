@@ -1576,16 +1576,16 @@ Are there any sub-limits on room rent and ICU charges for Plan A?""",
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px; margin-top: 2rem;">
-        <h4>🎯 Maximum Accuracy HackRX System</h4>
+        <h4 style="color: black;">🎯 Maximum Accuracy HackRX System</h4>
         <div class="accuracy-badge">95%+ Accuracy Guaranteed</div>
         <div class="accuracy-badge">No  Required</div>
         <div class="accuracy-badge">Advanced NLP Powered</div>
-        <p>TF-IDF + Pattern Recognition + Domain Expertise + Advanced Text Processing</p>
+        <p style="font-size: 0.9em; color: #666;" >TF-IDF + Pattern Recognition + Domain Expertise + Advanced Text Processing</p>
         <p style="font-size: 0.9em; color: #666;">
             Built for Maximum Accuracy Insurance, Legal, HR & Compliance Document Analysis
         </p>
         <p style="font-size: 0.8em; color: #888;">
-            API Token: {API_TOKEN}
+            
         </p>
     </div>
     """, unsafe_allow_html=True)
